@@ -1,6 +1,5 @@
 let audioActual = null;
-let botonActual = null;
-let barraActual = null;
+let cardActual = null;
 let audiosGlobal = [];
 
 const lista = document.getElementById("lista-audios");
@@ -12,6 +11,12 @@ fetch("/api/audios")
         audiosGlobal = audios;
         renderAudios(audios);
     });
+
+function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
 function renderAudios(audios) {
     lista.innerHTML = "";
@@ -34,45 +39,52 @@ function renderAudios(audios) {
         progreso.className = "barra-progreso";
         barra.appendChild(progreso);
 
+        const tiempo = document.createElement("div");
+        tiempo.className = "tiempo";
+        tiempo.textContent = "0:00 / 0:00";
+
         boton.onclick = () => {
             if (audioActual && audioActual !== audioEl) {
                 audioActual.pause();
-                botonActual.textContent = "Reproducir";
-                barraActual.style.width = "0%";
+                cardActual.classList.remove("activo");
             }
 
             if (audioEl.paused) {
                 audioEl.play();
                 boton.textContent = "Detener";
+                card.classList.add("activo");
                 audioActual = audioEl;
-                botonActual = boton;
-                barraActual = progreso;
+                cardActual = card;
             } else {
                 audioEl.pause();
                 boton.textContent = "Reproducir";
+                card.classList.remove("activo");
             }
         };
 
+        audioEl.onloadedmetadata = () => {
+            tiempo.textContent = `0:00 / ${formatTime(audioEl.duration)}`;
+        };
+
         audioEl.ontimeupdate = () => {
-            const porcentaje = (audioEl.currentTime / audioEl.duration) * 100;
-            progreso.style.width = porcentaje + "%";
+            progreso.style.width = (audioEl.currentTime / audioEl.duration) * 100 + "%";
+            tiempo.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
         };
 
         audioEl.onended = () => {
             boton.textContent = "Reproducir";
             progreso.style.width = "0%";
+            card.classList.remove("activo");
         };
 
         barra.onclick = (e) => {
             const rect = barra.getBoundingClientRect();
-            const porcentaje = (e.clientX - rect.left) / rect.width;
-            audioEl.currentTime = porcentaje * audioEl.duration;
+            audioEl.currentTime = ((e.clientX - rect.left) / rect.width) * audioEl.duration;
         };
 
         const controles = document.createElement("div");
         controles.className = "controles";
-        controles.appendChild(boton);
-        controles.appendChild(barra);
+        controles.append(boton, barra, tiempo);
 
         card.innerHTML = `
             <strong>${audio.nombre}</strong>
@@ -85,18 +97,10 @@ function renderAudios(audios) {
     });
 }
 
-/* Buscador */
+/* 🔎 Buscador */
 buscador.addEventListener("input", () => {
     const texto = buscador.value.toLowerCase();
-    const filtrados = audiosGlobal.filter(a =>
-        a.nombre.toLowerCase().includes(texto)
+    renderAudios(
+        audiosGlobal.filter(a => a.nombre.toLowerCase().includes(texto))
     );
-    renderAudios(filtrados);
-});
-
-/* Bloqueo clic derecho */
-document.addEventListener("contextmenu", e => {
-    if (e.target.tagName === "AUDIO") {
-        e.preventDefault();
-    }
 });

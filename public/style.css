@@ -4,7 +4,7 @@
     --texto: #1f2937;
     --secundario: #6b7280;
     --card: #ffffff;
-    --radio: 12px;
+    --activo: #e8ebff;
 }
 
 * {
@@ -19,21 +19,31 @@ body {
     color: var(--texto);
 }
 
-/* Encabezado */
+/* ===== HEADER ===== */
 .header {
     max-width: 600px;
     margin: 0 auto 24px;
-    text-align: center;
 }
 
-.header h1 {
-    margin-bottom: 4px;
+.header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.logo {
+    width: 50px;
+    height: auto;
+}
+
+.header-text h1 {
+    margin: 0;
 }
 
 .subtitulo {
-    color: var(--secundario);
     font-size: 16px;
-    margin-bottom: 14px;
+    color: var(--secundario);
 }
 
 #buscador {
@@ -44,19 +54,24 @@ body {
     border: 1px solid #ccc;
 }
 
-/* Lista */
+/* ===== LISTA ===== */
 #lista-audios {
     max-width: 600px;
     margin: 0 auto;
 }
 
-/* Card */
+/* ===== CARD ===== */
 .audio {
     background: var(--card);
-    border-radius: var(--radio);
+    border-radius: 12px;
     padding: 14px;
     margin-bottom: 14px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.audio.activo {
+    background: var(--activo);
+    border-left: 4px solid var(--primario);
 }
 
 .audio strong {
@@ -69,7 +84,7 @@ body {
     margin-bottom: 8px;
 }
 
-/* Controles */
+/* ===== CONTROLES ===== */
 .controles {
     display: flex;
     align-items: center;
@@ -91,7 +106,7 @@ body {
     color: white;
 }
 
-/* Barra de progreso */
+/* ===== BARRA ===== */
 .barra {
     flex-grow: 1;
     height: 6px;
@@ -106,4 +121,12 @@ body {
     width: 0%;
     background: var(--primario);
     border-radius: 4px;
+}
+
+/* ===== TIEMPO ===== */
+.tiempo {
+    font-size: 12px;
+    color: var(--secundario);
+    min-width: 70px;
+    text-align: right;
 }
