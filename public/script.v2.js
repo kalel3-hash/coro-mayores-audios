@@ -1,106 +1,86 @@
+const VOZ = document.body.dataset.voz;
+const lista = document.getElementById("lista-audios");
+const buscador = document.getElementById("buscador");
+
 let audioActual = null;
 let cardActual = null;
 let audiosGlobal = [];
 
-const lista = document.getElementById("lista-audios");
-const buscador = document.getElementById("buscador");
-
 fetch("/api/audios")
-    .then(res => res.json())
+    .then(r => r.json())
     .then(audios => {
-        audiosGlobal = audios;
-        renderAudios(audios);
+        audiosGlobal = audios.filter(a => a.carpeta === VOZ);
+        render(audiosGlobal);
     });
 
-function formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
+function fmt(s){
+    const m=Math.floor(s/60), d=Math.floor(s%60);
+    return`${m}:${d.toString().padStart(2,"0")}`;
 }
 
-function renderAudios(audios) {
-    lista.innerHTML = "";
+function render(audios){
+    lista.innerHTML="";
+    audios.forEach(a=>{
+        const card=document.createElement("div");
+        card.className="audio";
 
-    audios.forEach(audio => {
-        const card = document.createElement("div");
-        card.className = "audio";
+        const audio=document.createElement("audio");
+        audio.src=a.archivo;
 
-        const audioEl = document.createElement("audio");
-        audioEl.src = audio.archivo;
-        audioEl.preload = "metadata";
+        const btn=document.createElement("button");
+        btn.textContent="Reproducir";
 
-        const boton = document.createElement("button");
-        boton.textContent = "Reproducir";
+        const barra=document.createElement("div");
+        barra.className="barra";
 
-        const barra = document.createElement("div");
-        barra.className = "barra";
+        const prog=document.createElement("div");
+        prog.className="barra-progreso";
+        barra.appendChild(prog);
 
-        const progreso = document.createElement("div");
-        progreso.className = "barra-progreso";
-        barra.appendChild(progreso);
+        const t=document.createElement("div");
+        t.className="tiempo";
+        t.textContent="0:00 / 0:00";
 
-        const tiempo = document.createElement("div");
-        tiempo.className = "tiempo";
-        tiempo.textContent = "0:00 / 0:00";
-
-        boton.onclick = () => {
-            if (audioActual && audioActual !== audioEl) {
+        btn.onclick=()=>{
+            if(audioActual&&audioActual!==audio){
                 audioActual.pause();
                 cardActual.classList.remove("activo");
             }
-
-            if (audioEl.paused) {
-                audioEl.play();
-                boton.textContent = "Detener";
+            if(audio.paused){
+                audio.play();
+                btn.textContent="Detener";
                 card.classList.add("activo");
-                audioActual = audioEl;
-                cardActual = card;
-            } else {
-                audioEl.pause();
-                boton.textContent = "Reproducir";
+                audioActual=audio;
+                cardActual=card;
+            }else{
+                audio.pause();
+                btn.textContent="Reproducir";
                 card.classList.remove("activo");
             }
         };
 
-        audioEl.onloadedmetadata = () => {
-            tiempo.textContent = `0:00 / ${formatTime(audioEl.duration)}`;
+        audio.onloadedmetadata=()=>t.textContent=`0:00 / ${fmt(audio.duration)}`;
+        audio.ontimeupdate=()=>{
+            prog.style.width=(audio.currentTime/audio.duration)*100+"%";
+            t.textContent=`${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+        };
+        audio.onended=()=>{btn.textContent="Reproducir";card.classList.remove("activo");};
+
+        barra.onclick=e=>{
+            const r=barra.getBoundingClientRect();
+            audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
         };
 
-        audioEl.ontimeupdate = () => {
-            progreso.style.width = (audioEl.currentTime / audioEl.duration) * 100 + "%";
-            tiempo.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
-        };
+        const c=document.createElement("div");
+        c.className="controles";
+        c.append(btn,barra,t);
 
-        audioEl.onended = () => {
-            boton.textContent = "Reproducir";
-            progreso.style.width = "0%";
-            card.classList.remove("activo");
-        };
-
-        barra.onclick = (e) => {
-            const rect = barra.getBoundingClientRect();
-            audioEl.currentTime = ((e.clientX - rect.left) / rect.width) * audioEl.duration;
-        };
-
-        const controles = document.createElement("div");
-        controles.className = "controles";
-        controles.append(boton, barra, tiempo);
-
-        card.innerHTML = `
-            <strong>${audio.nombre}</strong>
-            <div class="voz">${audio.carpeta}</div>
-        `;
-
-        card.appendChild(controles);
-        card.appendChild(audioEl);
+        card.innerHTML=`<strong>${a.nombre}</strong><div class="voz">${a.carpeta}</div>`;
+        card.append(c,audio);
         lista.appendChild(card);
     });
 }
 
-/* 🔎 Buscador */
-buscador.addEventListener("input", () => {
-    const texto = buscador.value.toLowerCase();
-    renderAudios(
-        audiosGlobal.filter(a => a.nombre.toLowerCase().includes(texto))
-    );
-});
+buscador.oninput=()=>render(
+    audiosGlobal.filter(a=>a.nombre.toLowerCase().includes(buscador.value.toLowerCase()))
+);
