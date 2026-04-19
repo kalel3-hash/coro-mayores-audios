@@ -1,3 +1,6 @@
+let audioActual = null;
+let botonActual = null;
+
 fetch("/api/audios")
     .then(res => res.json())
     .then(audios => {
@@ -14,14 +17,28 @@ fetch("/api/audios")
 
             const boton = document.createElement("button");
             boton.textContent = "▶ Reproducir";
+
             boton.onclick = () => {
+
+                // Pausar cualquier otro audio
+                if (audioActual && audioActual !== audioEl) {
+                    audioActual.pause();
+                    botonActual.textContent = "▶ Reproducir";
+                }
+
                 if (audioEl.paused) {
                     audioEl.play();
                     boton.textContent = "⏸ Pausar";
+                    audioActual = audioEl;
+                    botonActual = boton;
                 } else {
                     audioEl.pause();
                     boton.textContent = "▶ Reproducir";
                 }
+            };
+
+            audioEl.onended = () => {
+                boton.textContent = "▶ Reproducir";
             };
 
             div.innerHTML = `
@@ -37,7 +54,7 @@ fetch("/api/audios")
         });
     });
 
-// Bloqueo clic derecho
+// Bloqueo clic derecho (extra)
 document.addEventListener("contextmenu", e => {
     if (e.target.tagName === "AUDIO" || e.target.tagName === "BUTTON") {
         e.preventDefault();
