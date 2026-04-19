@@ -1,9 +1,9 @@
 :root {
-    --color-primario: #4a60d6;
-    --color-fondo: #f4f6fb;
-    --color-texto: #1f2937;
-    --color-secundario: #6b7280;
-    --color-card: #ffffff;
+    --primario: #4a60d6;
+    --fondo: #f4f6fb;
+    --texto: #1f2937;
+    --secundario: #6b7280;
+    --card: #ffffff;
     --radio: 12px;
 }
 
@@ -14,73 +14,96 @@
 body {
     margin: 0;
     padding: 16px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    background-color: var(--color-fondo);
-    color: var(--color-texto);
+    font-family: system-ui, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
 }
 
-h1 {
+/* Encabezado */
+.header {
+    max-width: 600px;
+    margin: 0 auto 24px;
     text-align: center;
-    font-size: 28px;
-    margin-bottom: 24px;
 }
 
-/* Tarjeta de audio */
+.header h1 {
+    margin-bottom: 4px;
+}
+
+.subtitulo {
+    color: var(--secundario);
+    font-size: 16px;
+    margin-bottom: 14px;
+}
+
+#buscador {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* Lista */
+#lista-audios {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Card */
 .audio {
-    background: var(--color-card);
+    background: var(--card);
     border-radius: var(--radio);
-    padding: 18px;
-    margin-bottom: 18px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
 .audio strong {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .audio .voz {
+    font-size: 13px;
+    color: var(--secundario);
+    margin-bottom: 8px;
+}
+
+/* Controles */
+.controles {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.controles button {
     font-size: 14px;
-    color: var(--color-secundario);
-}
-
-/* Botón principal */
-.audio button {
-    margin-top: 8px;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--color-primario);
-    color: white;
-    font-size: 16px;
-    padding: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--primario);
+    background: white;
+    color: var(--primario);
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
-.audio button:hover {
-    background-color: #3e53c4;
+.controles button:hover {
+    background: var(--primario);
+    color: white;
 }
 
-/* === MÓVIL === */
-@media (max-width: 768px) {
+/* Barra de progreso */
+.barra {
+    flex-grow: 1;
+    height: 6px;
+    background: #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+}
 
-    body {
-        font-size: 18px;
-        padding: 14px;
-    }
-
-    h1 {
-        font-size: 24px;
-    }
-
-    .audio {
-        padding: 20px;
-    }
-
-    .audio button {
-        font-size: 18px;
-        padding: 16px;
-    }
+.barra-progreso {
+    height: 100%;
+    width: 0%;
+    background: var(--primario);
+    border-radius: 4px;
 }
