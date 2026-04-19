@@ -28,13 +28,21 @@ body {
 .header-top {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     margin-bottom: 16px;
 }
 
+/* ✅ LOGO MÁS GRANDE */
 .logo {
-    width: 50px;
+    width: 80px;      /* Desktop */
     height: auto;
+}
+
+/* ✅ Aún más grande en móvil */
+@media (max-width: 768px) {
+    .logo {
+        width: 96px;
+    }
 }
 
 .header-text h1 {
@@ -46,6 +54,7 @@ body {
     color: var(--secundario);
 }
 
+/* ===== BUSCADOR ===== */
 #buscador {
     width: 100%;
     padding: 10px 12px;
@@ -106,7 +115,7 @@ body {
     color: white;
 }
 
-/* ===== BARRA ===== */
+/* ===== BARRA DE PROGRESO ===== */
 .barra {
     flex-grow: 1;
     height: 6px;
