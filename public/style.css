@@ -32,16 +32,16 @@ body {
     margin-bottom: 16px;
 }
 
-/* ✅ LOGO MÁS GRANDE */
+/* ✅ LOGO MUCHO MÁS GRANDE */
 .logo {
-    width: 80px;      /* Desktop */
+    width: 120px;      /* Desktop: bien visible */
     height: auto;
 }
 
-/* ✅ Aún más grande en móvil */
+/* ✅ Extra grande en móvil */
 @media (max-width: 768px) {
     .logo {
-        width: 96px;
+        width: 150px;  /* Móvil: protagonista */
     }
 }
 
