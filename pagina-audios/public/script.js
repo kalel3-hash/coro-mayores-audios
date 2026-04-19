@@ -1,5 +1,5 @@
 fetch("/api/audios")
-    .then(response => response.json())
+    .then(res => res.json())
     .then(audios => {
         const lista = document.getElementById("lista-audios");
         lista.innerHTML = "";
@@ -8,36 +8,38 @@ fetch("/api/audios")
             const div = document.createElement("div");
             div.className = "audio";
 
+            const audioEl = document.createElement("audio");
+            audioEl.src = audio.archivo;
+            audioEl.preload = "none";
+
+            const boton = document.createElement("button");
+            boton.textContent = "▶ Reproducir";
+            boton.onclick = () => {
+                if (audioEl.paused) {
+                    audioEl.play();
+                    boton.textContent = "⏸ Pausar";
+                } else {
+                    audioEl.pause();
+                    boton.textContent = "▶ Reproducir";
+                }
+            };
+
             div.innerHTML = `
                 <p><strong>${audio.nombre}</strong></p>
-                <p style="font-size: 0.9em; color: #555;">
+                <p style="font-size: 0.9em; color:#555;">
                     Voz: ${audio.carpeta}
                 </p>
-                <audio
-                    controls
-                    controlsList="nodownload noremoteplayback"
-                    draggable="false"
-                >
-                    <source src="${audio.archivo}" type="audio/mpeg">
-                    Tu navegador no soporta audio HTML5.
-                </audio>
             `;
 
+            div.appendChild(boton);
+            div.appendChild(audioEl);
             lista.appendChild(div);
         });
-    })
-    .catch(error => {
-        console.error("Error cargando audios:", error);
-        document.getElementById("lista-audios").innerText =
-            "Error cargando los audios";
     });
 
-/*
- * ❌ Bloquear menú contextual (clic derecho) SOBRE los audios
- * Evita "Guardar audio como…" para usuarios comunes
- */
-document.addEventListener("contextmenu", event => {
-    if (event.target.tagName === "AUDIO") {
-        event.preventDefault();
+// Bloqueo clic derecho
+document.addEventListener("contextmenu", e => {
+    if (e.target.tagName === "AUDIO" || e.target.tagName === "BUTTON") {
+        e.preventDefault();
     }
 });
