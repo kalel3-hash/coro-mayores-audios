@@ -8,8 +8,8 @@ fetch("/api/audios")
         lista.innerHTML = "";
 
         audios.forEach(audio => {
-            const div = document.createElement("div");
-            div.className = "audio";
+            const card = document.createElement("div");
+            card.className = "audio";
 
             const audioEl = document.createElement("audio");
             audioEl.src = audio.archivo;
@@ -20,7 +20,6 @@ fetch("/api/audios")
 
             boton.onclick = () => {
 
-                // Pausar cualquier otro audio
                 if (audioActual && audioActual !== audioEl) {
                     audioActual.pause();
                     botonActual.textContent = "▶ Reproducir";
@@ -41,22 +40,20 @@ fetch("/api/audios")
                 boton.textContent = "▶ Reproducir";
             };
 
-            div.innerHTML = `
-                <p><strong>${audio.nombre}</strong></p>
-                <p style="font-size: 0.9em; color:#555;">
-                    Voz: ${audio.carpeta}
-                </p>
+            card.innerHTML = `
+                <strong>${audio.nombre}</strong>
+                <div class="voz">Voz: ${audio.carpeta}</div>
             `;
 
-            div.appendChild(boton);
-            div.appendChild(audioEl);
-            lista.appendChild(div);
+            card.appendChild(boton);
+            card.appendChild(audioEl);
+            lista.appendChild(card);
         });
     });
 
-// Bloqueo clic derecho (extra)
+// Bloquear clic derecho (extra)
 document.addEventListener("contextmenu", e => {
     if (e.target.tagName === "AUDIO" || e.target.tagName === "BUTTON") {
-        e.preventDefault();
+        event.preventDefault();
     }
 });

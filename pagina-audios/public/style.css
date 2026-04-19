@@ -1,57 +1,86 @@
+:root {
+    --color-primario: #4a60d6;
+    --color-fondo: #f4f6fb;
+    --color-texto: #1f2937;
+    --color-secundario: #6b7280;
+    --color-card: #ffffff;
+    --radio: 12px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    background-color: #f3f3f3;
     margin: 0;
     padding: 16px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
 }
 
 h1 {
     text-align: center;
+    font-size: 28px;
     margin-bottom: 24px;
 }
 
+/* Tarjeta de audio */
 .audio {
-    background: #ffffff;
-    padding: 16px;
-    margin-bottom: 16px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    background: var(--color-card);
+    border-radius: var(--radio);
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.audio p {
-    margin: 6px 0;
+.audio strong {
+    font-size: 18px;
 }
 
-/* Botón normal (desktop) */
-.audio button {
-    padding: 8px 12px;
+.audio .voz {
     font-size: 14px;
-    border-radius: 6px;
-    border: none;
-    background-color: #4a60d6;
-    color: white;
-    cursor: pointer;
+    color: var(--color-secundario);
 }
 
-/* ==== SOLO MÓVIL ==== */
+/* Botón principal */
+.audio button {
+    margin-top: 8px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--color-primario);
+    color: white;
+    font-size: 16px;
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.audio button:hover {
+    background-color: #3e53c4;
+}
+
+/* === MÓVIL === */
 @media (max-width: 768px) {
 
     body {
         font-size: 18px;
+        padding: 14px;
     }
 
     h1 {
         font-size: 24px;
     }
 
-    .audio button {
-        width: 100%;
-        padding: 14px;
-        font-size: 18px;
-        border-radius: 10px;
+    .audio {
+        padding: 20px;
     }
 
-    .audio {
-        padding: 18px;
+    .audio button {
+        font-size: 18px;
+        padding: 16px;
     }
 }
