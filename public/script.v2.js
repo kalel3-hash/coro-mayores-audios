@@ -46,6 +46,10 @@ function render(audios) {
         tiempo.className = "tiempo";
         tiempo.textContent = "0:00 / 0:00";
 
+        const contador = document.createElement("div");
+        contador.className = "contador-reproducciones";
+        contador.textContent = `▶ ${a.reproducciones || 0}`;
+
         btn.onclick = () => {
 
             if (audioActual && audioActual !== audio) {
@@ -67,6 +71,20 @@ function render(audios) {
                         himno: a.nombre
                     });
                 }
+
+                // ✅ CONTADOR DE REPRODUCCIONES
+                fetch("/api/play", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ archivo: a.archivo })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (typeof data.contador === "number") {
+                            contador.textContent = `▶ ${data.contador}`;
+                        }
+                    })
+                    .catch(err => console.error("No se pudo registrar la reproducción:", err));
 
             } else {
                 audio.pause();
@@ -97,7 +115,7 @@ function render(audios) {
 
         const controles = document.createElement("div");
         controles.className = "controles";
-        controles.append(btn, barra, tiempo);
+        controles.append(btn, barra, tiempo, contador);
 
         card.innerHTML = `<strong>${a.nombre}</strong>`;
         card.append(controles, audio);
