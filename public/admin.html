@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coro Mayores – Administración</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-wrap {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .resumen-total {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+
+        .resumen-total .numero {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primario);
+        }
+
+        .voz-grupo {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .voz-grupo h2 {
+            font-size: 17px;
+            margin: 0 0 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .voz-grupo .subtotal {
+            color: var(--secundario);
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 6px 4px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th:last-child, td:last-child {
+            text-align: right;
+        }
+
+        th {
+            color: var(--secundario);
+            font-weight: normal;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-top">
+        <img src="img/logo.png" class="logo" alt="Coro Mayores">
+        <div class="header-text">
+            <h1>🎶 Coro Mayores</h1>
+            <div class="subtitulo">Administración – Reproducciones</div>
+        </div>
+    </div>
+</header>
+
+<div class="admin-wrap">
+    <div id="contenido">Cargando datos...</div>
+</div>
+
+<script>
+fetch("/api/audios")
+    .then(res => res.json())
+    .then(audios => {
+        const contenido = document.getElementById("contenido");
+
+        if (!Array.isArray(audios) || audios.length === 0) {
+            contenido.innerHTML = "<p>No se encontraron audios.</p>";
+            return;
+        }
+
+        // Total general
+        const totalGeneral = audios.reduce((acc, a) => acc + (a.reproducciones || 0), 0);
+
+        // Agrupar por carpeta (voz)
+        const porVoz = {};
+        audios.forEach(a => {
+            if (!porVoz[a.carpeta]) porVoz[a.carpeta] = [];
+            porVoz[a.carpeta].push(a);
+        });
+
+        let html = `
+            <div class="resumen-total">
+                <div class="numero">${totalGeneral}</div>
+                <div>reproducciones totales</div>
+            </div>
+        `;
+
+        Object.keys(porVoz).sort().forEach(voz => {
+            const audiosVoz = porVoz[voz].slice().sort((a, b) => (b.reproducciones || 0) - (a.reproducciones || 0));
+            const subtotal = audiosVoz.reduce((acc, a) => acc + (a.reproducciones || 0), 0);
+
+            html += `
+                <div class="voz-grupo">
+                    <h2>${voz} <span class="subtotal">${subtotal} reproducciones</span></h2>
+                    <table>
+                        <thead>
+                            <tr><th>Himno</th><th>Reproducciones</th></tr>
+                        </thead>
+                        <tbody>
+                            ${audiosVoz.map(a => `
+                                <tr>
+                                    <td>${a.nombre}</td>
+                                    <td>${a.reproducciones || 0}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        });
+
+        contenido.innerHTML = html;
+    })
+    .catch(err => {
+        document.getElementById("contenido").innerHTML =
+            "<p>Ocurrió un error al cargar los datos. Intentá recargar la página.</p>";
+        console.error(err);
+    });
+</script>
+
+</body>
+</html>
